@@ -33,9 +33,13 @@ public class Solution {
         int maxY = 0;
         for(int[] s: sizes) {
             for(int x: len) {
+
+                /*
                 if(x> s[0] && ) {
-                    maxX =
+//                    maxX =
                 }
+
+                 */
             }
         }
 
