@@ -1,7 +1,7 @@
 package WalletSize;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 
 public class Solution {
     public static void main(String[] args) {
@@ -17,39 +17,21 @@ public class Solution {
     }
 
     public int solution(int[][] sizes) {
-        int answer = 0;
-        HashSet<Integer> len = new HashSet<>();
-        // 돌리기
-        for (int i = 0; i < sizes.length; i++) {
-            if (sizes[i][1] > sizes[i][0]) {
-                int tmp = sizes[i][0];
-                sizes[i][0] = sizes[i][1];
-                sizes[i][1] = tmp;
-            }
-            len.add(sizes[i][0]);
-            len.add(sizes[i][1]);
-        }
-        int maxX = 0;
-        int maxY = 0;
-        for(int[] s: sizes) {
-            for(int x: len) {
-
-                /*
-                if(x> s[0] && ) {
-//                    maxX =
-                }
-
-                 */
+        ArrayList<Integer> longer = new ArrayList<>();
+        ArrayList<Integer> shorter = new ArrayList<>();
+        for(int [] size: sizes) {
+            int x = size[0];
+            int y = size[1];
+            if(x > y) {
+                longer.add(x);
+                shorter.add(y);
+            } else {
+                longer.add(y);
+                shorter.add(x);
             }
         }
-
-        return answer;
-    }
-
-    private boolean isFit(int[] wallet, int[] card) {
-        if (wallet[0] < card[0] && wallet[1] < card[1]) {
-            return true;
-        }
-        return wallet[0] < card[1] && wallet[1] < card[0];
+        Collections.sort(longer);
+        Collections.sort(shorter);
+        return longer.get(sizes.length -1) * shorter.get(sizes.length - 1);
     }
 }

@@ -1,51 +1,61 @@
 package PhoneHand;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
 
 public class Solution {
 
+    public static void main(String[] args) {
+        int[][] nums = {
+                {1, 3, 4, 5, 8, 2, 1, 4, 5, 9, 5},
+                {7, 0, 8, 2, 8, 3, 1, 5, 7, 6, 2},
+                {1, 2, 3, 4, 5, 6, 7, 8, 9, 0}
+        };
+        String[] hands = {
+                "right", "left", "right"
+        };
+        Solution solution = new Solution();
+        for (int i = 0; i < 3; i++) {
+            System.out.println(solution.solution(nums[i], hands[i]));
+        }
+    }
+
+    final int SHARP = -2;
+    final int STAR = -1;
 
     public String solution(int[] numbers, String hand) {
+        int leftNum = STAR, rightNum = SHARP;
         StringBuilder sb = new StringBuilder();
-        List<Integer> leftNums = Arrays.asList(1, 4, 7);
-        List<Integer> rightNums = Arrays.asList(3, 6, 9);
-        int prevLeft = -1;
-        int prevRight = -1;
-
-        for (int i = 0; i < numbers.length; i++) {
-            int n = numbers[i];
-            if (leftNums.contains(n)) {
+        HashSet<Integer> leftSet = new HashSet<>();
+        leftSet.add(1);
+        leftSet.add(4);
+        leftSet.add(7);
+        HashSet<Integer> rightSet = new HashSet<>();
+        rightSet.add(3);
+        rightSet.add(6);
+        rightSet.add(9);
+        for(int num: numbers) {
+            if(leftSet.contains(num)) {
                 sb.append("L");
-                prevLeft = n;
-            } else if (rightNums.contains(n)) {
+                leftNum = num;
+            } else if(rightSet.contains(num)) {
                 sb.append("R");
-                prevRight = n;
+                rightNum = num;
             } else {
-                int lDistance, rDistance;
-                if (prevLeft == -1) {
-                    lDistance = getInitialDistance(n);
-                } else {
-                    lDistance = getDistance(n, prevLeft);
-                }
-                if (prevRight == -1) {
-                    rDistance = getInitialDistance(n);
-                } else {
-                    rDistance = getDistance(n, prevRight);
-                }
-                if (lDistance < rDistance) {
+                int lDistance = getDistance(leftNum, num);
+                int rDistance = getDistance(rightNum, num);
+                if(lDistance<rDistance) {
                     sb.append("L");
-                    prevLeft = n;
-                } else if (rDistance < lDistance) {
+                    leftNum = num;
+                } else if(rDistance<lDistance) {
                     sb.append("R");
-                    prevRight = n;
+                    rightNum = num;
                 } else {
-                    if (hand.equals("right")) {
-                        sb.append("R");
-                        prevRight = n;
-                    } else {
+                    if(hand.equals("left")) {
                         sb.append("L");
-                        prevLeft = n;
+                        leftNum = num;
+                    } else {
+                        sb.append("R");
+                        rightNum = num;
                     }
                 }
             }
@@ -53,30 +63,26 @@ public class Solution {
         return sb.toString();
     }
 
-    // 거리 구하기
-    private int getDistance(int a, int b)  {
-        int[][] pad = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {-2, 0, -2}};
-        int y1 = -1, y2 = -1, x1 = -1, x2 = -1;
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (a == pad[i][j]) {
-                    x1 = j;
-                    y1 = i;
-                } else if (pad[i][j] == b) {
-                    x2 = j;
-                    y2 = i;
+    private int getDistance(int a, int b) {
+        int[][] arr = {
+                {1, 2, 3},
+                {4, 5, 6},
+                {7, 8, 9},
+                {STAR, 0, SHARP}
+        };
+        int ax = 0, ay = 0, bx = 0, by = 0;
+        for (int y = 0; y < 4; y++) {
+            for (int x = 0; x < 3; x++) {
+                if (arr[y][x] == a) {
+                    ax = x;
+                    ay = y;
+                }
+                if (arr[y][x] == b) {
+                    bx = x;
+                    by = y;
                 }
             }
         }
-        return Math.abs(x2 - x1) + Math.abs(y2 - y1);
-    }
-
-    private int getInitialDistance(int n) {
-        return switch (n) {
-            case 0 -> 1;
-            case 8 -> 2;
-            case 5 -> 3;
-            default -> 4;
-        };
+        return Math.abs(ax - bx) + Math.abs(ay - by);
     }
 }
